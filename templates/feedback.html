@@ -1,0 +1,162 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+	
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<!-- Font and CSS -->
+	<link href="{% static 'css/styles.css' %}" rel="stylesheet" type="text/css" />
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link
+		href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,900&display=swap"
+		rel="stylesheet">
+
+	<!-- TailWind CSS  -->
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+		tailwind.config = {
+			theme: {
+				extend: {
+					colors: {
+						primary: '#993399',
+					}
+				}
+			}
+		}
+	</script>
+</head>
+
+<body class="bg-gray-100">
+	<!-- NAV  -->
+	<div class="flex fixed w-full justify-between bg-white items-center py-2 px-4">
+		<!-- Logo  -->
+		<div>
+			<a href="/">
+				<img src="{% static 'images/O-shaped_logo.jpg' %}" class="h-[70px] object-contain w-auto" />
+			</a>
+		</div>
+
+		<!-- Logout  -->
+		<div class="flex items-center space-x-5 md:mr-10 text-sm text-white">
+			<button class="px-3 py-2 bg-primary ">Help</button>
+			<button class="px-3 py-2 bg-primary">Log Out</button>
+		</div>
+	</div>
+
+	<!-- MAIN BODY  -->
+	<div class="pt-24">
+
+		<!-- Total Score for SUPERATTRIBUTES  -->
+		<div class="max-w-5xl mx-auto py-10">
+			<h1 class="text-center text-3xl font-semibold">
+				TOTAL SCORES FOR SUPER ATTRIBUTES
+			</h1>
+			<table class="text-sm border-collapse table-fixed border border-slate-500 mt-4 w-full">
+
+				<tr>
+					<th class="border border-slate-700">SuperAttribute</th>
+					<th class="border border-slate-700">Score</th>
+				</tr>
+
+				{% for superattribute_result in superattribute_results %}
+				<tr>
+					<td class="border border-slate-700 w-[85%] p-1">{{superattribute_result.name}}</td>
+					<td class="border border-slate-700 text-center text-xl font-semibold">{{superattribute_result.total_score}}</td>
+				</tr>
+				{% endfor %}
+
+			</table>
+		</div>
+
+		<!-- Total Score for Attributes  -->
+		<div class="max-w-5xl mx-auto py-10">
+			<h1 class="text-center text-3xl font-semibold">
+				TOTAL SCORES FOR ATTRIBUTES
+			</h1>
+			<table class="text-sm border-collapse table-fixed border border-slate-500 mt-4 w-full">
+
+				<tr>
+					<th class="border border-slate-700">Attribute</th>
+					<th class="border border-slate-700">Score</th>
+					<th class="border border-slate-700">Percentage</th>
+				</tr>
+
+				{% for attribute_result in attribute_results %}
+				<tr>
+					<td class="border border-slate-700 w-[85%] p-1">{{attribute_result.name}}</td>
+					<td class="border border-slate-700 text-center text-xl font-semibold">{{attribute_result.total_score}}</td>
+					<td class="border border-slate-700 text-center text-xl font-semibold">{{attribute_result.percentage}} %</td>
+				</tr>
+				{% endfor %}
+
+			</table>
+		</div>
+
+		<!-- Total Score for Scenario  -->
+		<div class="max-w-5xl mx-auto py-10">
+			<h1 class="text-center text-3xl font-semibold">
+				TOTAL SCORES FOR SCENARIOS
+			</h1>
+			<table class="text-sm border-collapse table-fixed border border-slate-500 mt-4">
+
+				<tr>
+					<th class="border border-slate-700">Number</th>
+					<th class="border border-slate-700">Scenario</th>
+					<th class="border border-slate-700">Score</th>
+				</tr>
+
+				{% for result in scenario_results %}
+				<tr>
+					<td class="border border-slate-700 p-1 text-center font-semibold">{{forloop.counter}}</td>
+					<td class="border border-slate-700 w-[85%] p-1">{{result.answer__scenario__content}}</td>
+					<td class="border border-slate-700 text-center text-xl font-semibold">{{result.total_score}}</td>
+				</tr>
+				{% endfor %}
+
+			</table>
+		</div>
+
+		<!-- Scenarios Answers and Scores  -->
+		<div class="">
+			{% for scenario in scenarios %}
+			<div class="max-w-5xl mx-auto pb-10">
+				<p class="text-center text-lg font-semibold pb-2">Scenario {{ forloop.counter }}</p>
+				<p class="text-sm text-center">{{ scenario.content }}</p>
+				<table class="text-sm border-collapse table-fixed border border-slate-500 mt-4">
+
+					<tr>
+						<th class="border border-slate-700">Answer</th>
+						<th class="border border-slate-700">User's Choice</th>
+						<th class="border border-slate-700">Correct</th>
+						<th class="border border-slate-700">Score</th>
+					</tr>
+
+					{% for response in responses %}
+					{% if response.answer.scenario == scenario %}
+
+					<tr>
+						<td class="border border-slate-700 w-[60%] p-1">{{response.answer}}</td>
+						<td class="border border-slate-700 text-center">{{response.choice}}</td>
+						<td class="border border-slate-700 text-center">{{response.answer.ranking}}</td>
+						<td class="border border-slate-700 text-center">{{response.score}}</td>
+					</tr>
+
+					{% endif %}
+					{% endfor %}
+
+				</table>
+			</div>
+			{% endfor %}
+
+
+
+		</div>
+
+	</div>
+</body>
+
+</html>

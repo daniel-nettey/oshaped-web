@@ -1,0 +1,178 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<!-- Font and CSS -->
+	<link href="{% static 'css/styles.css' %}" rel="stylesheet" type="text/css" />
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link
+		href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,900&display=swap"
+		rel="stylesheet">
+
+	<!-- TailWind CSS  -->
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+		tailwind.config = {
+			theme: {
+				extend: {
+					colors: {
+						primary: '#993399',
+					}
+				}
+			}
+		}
+	</script>
+</head>
+
+<body class="bg-gray-100">
+	<div class="flex fixed w-full justify-between bg-white items-center py-2 px-4">
+		<!-- Logo  -->
+		<div>
+			<a href="/">
+				<img src="{% static 'images/O-shaped_logo.jpg' %}" class="h-[70px] object-contain w-auto" />
+			</a>
+		</div>
+
+		<!-- Logout  -->
+		<div class="flex items-center space-x-5 md:mr-10 text-sm text-white">
+			<button class="px-3 py-2 bg-primary ">Help</button>
+			<button class="px-3 py-2 bg-primary">Log Out</button>
+		</div>
+	</div>
+
+	<div class="pt-24">
+		
+		<div class="container max-w-4xl mx-auto py-10 h-full ">
+			<div class="overflow-hidden bg-white shadow sm:rounded-lg">
+				<div class="px-4 py-5  sm:px-6">
+					<h3 class="text-lg font-medium leading-6 text-gray-900">Applicant Information</h3>
+					<p class="mt-1 max-w-2xl text-sm text-gray-500">Personal details and Result.</p>
+				</div>
+	
+				<div class="border-t border-gray-200">
+					<!-- User Information  -->
+					<div class="px-4 py-4 md:grid md:grid-cols-2 sm:gap-4 sm:px-6 ">
+						<div class="mt-1">
+							<p class="text-sm font-medium text-gray-500">First name</p>
+							<p class="mt-1 text-sm text-gray-900 sm:mt-0">{{user.first_name}}</p>
+						</div>
+						<div class="mt-1">
+							<p class="text-sm font-medium text-gray-500">Last name</p>
+							<p class="mt-1 text-sm text-gray-900 sm:mt-0">{{user.last_name}}</p>
+						</div>
+						<div class="mt-1">
+							<p class="text-sm font-medium text-gray-500">Email</p>
+							<p class="mt-1 text-sm text-gray-900 sm:mt-0">{{user.email}}</p>
+						</div>
+						<div class="mt-1">
+							<p class="text-sm font-medium text-gray-500">Gender</p>
+							<p class="mt-1 text-sm text-gray-900 sm:mt-0">{{user.gender}}</p>
+						</div>
+						<div class="mt-1">
+							<p class="text-sm font-medium text-gray-500">Date of Birth</p>
+							<p class="mt-1 text-sm text-gray-900 sm:mt-0">{{user.date_of_birth}}</p>
+						</div>
+						<div class="mt-1">
+							<p class="text-sm font-medium text-gray-500">Mobile</p>
+							<p class="mt-1 text-sm text-gray-900 sm:mt-0">{{user.mobile}}</p>
+						</div>
+						<div class="mt-1">
+							<p class="text-sm font-medium text-gray-500">Role</p>
+							<p class="mt-1 text-sm text-gray-900 sm:mt-0">{{user.role}} </p>
+						</div>
+						<div class="mt-1">
+							<p class="text-sm font-medium text-gray-500">Position</p>
+							<p class="mt-1 text-sm text-gray-900  sm:mt-0">{{user.position}}</p>
+						</div>
+						<div class="mt-1">
+							<p class="text-sm font-medium text-gray-500">Date of Program</p>
+							<p class="mt-1 text-sm text-gray-900 sm:mt-0">{{user.date_of_program}}</p>
+						</div>
+					</div>
+	
+					<!-- Attachments -->
+					<div class="px-4 py-5 sm:px-6">
+						<p class="text-sm font-medium text-gray-500">Attachments</p>
+						<div class="pt-1 text-sm text-gray-900 sm:mt-0">
+							<ul role="list" class="divide-y divide-gray-200 rounded-md border border-gray-200">
+								<li class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
+									<div class="flex w-0 flex-1 items-center">
+										<svg class="h-5 w-5 flex-shrink-0 text-gray-400" viewBox="0 0 20 20"
+											fill="currentColor" aria-hidden="true">
+											<path fill-rule="evenodd"
+												d="M15.621 4.379a3 3 0 00-4.242 0l-7 7a3 3 0 004.241 4.243h.001l.497-.5a.75.75 0 011.064 1.057l-.498.501-.002.002a4.5 4.5 0 01-6.364-6.364l7-7a4.5 4.5 0 016.368 6.36l-3.455 3.553A2.625 2.625 0 119.52 9.52l3.45-3.451a.75.75 0 111.061 1.06l-3.45 3.451a1.125 1.125 0 001.587 1.595l3.454-3.553a3 3 0 000-4.242z"
+												clip-rule="evenodd" />
+										</svg>
+										<span class="ml-2 w-0 flex-1 truncate">test1_result.pdf</span>
+									</div>
+									<div class="ml-4 flex-shrink-0">
+										<a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Download</a>
+									</div>
+								</li>
+								<li class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
+									<div class="flex w-0 flex-1 items-center">
+										<svg class="h-5 w-5 flex-shrink-0 text-gray-400" viewBox="0 0 20 20"
+											fill="currentColor" aria-hidden="true">
+											<path fill-rule="evenodd"
+												d="M15.621 4.379a3 3 0 00-4.242 0l-7 7a3 3 0 004.241 4.243h.001l.497-.5a.75.75 0 011.064 1.057l-.498.501-.002.002a4.5 4.5 0 01-6.364-6.364l7-7a4.5 4.5 0 016.368 6.36l-3.455 3.553A2.625 2.625 0 119.52 9.52l3.45-3.451a.75.75 0 111.061 1.06l-3.45 3.451a1.125 1.125 0 001.587 1.595l3.454-3.553a3 3 0 000-4.242z"
+												clip-rule="evenodd" />
+										</svg>
+										<span class="ml-2 w-0 flex-1 truncate">other_information.pdf</span>
+									</div>
+									<div class="ml-4 space-x-2 flex-shrink-0">
+										<a href="#" class="font-medium text-red-600 hover:text-red-500">View</a>
+										<a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Download</a>
+									</div>
+								</li>
+	
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="">
+
+			{% for scenario in scenarios %}
+			<div class="max-w-5xl mx-auto pb-10">
+				<p class="text-center text-lg font-semibold pb-2">Scenario {{ forloop.counter }}</p>
+				<p class="text-sm text-center">{{ scenario.content }}</p>
+				<table class="text-sm border-collapse table-fixed border border-slate-500 mt-4">
+	
+					<tr>
+						<th class="border border-slate-700">Answer</th>
+						<th class="border border-slate-700">User's Choice</th>
+						<th class="border border-slate-700">Correct</th>
+						<th class="border border-slate-700">Score</th>
+					</tr>
+	
+					{% for response in responses %}
+					{% if response.answer.scenario == scenario %}
+	
+						<tr>
+							<td class="border border-slate-700 w-[60%] p-1">{{response.answer}}</td>
+							<td class="border border-slate-700 text-center">{{response.choice}}</td>
+							<td class="border border-slate-700 text-center">{{response.answer.ranking}}</td>
+							<td class="border border-slate-700 text-center">{{response.score}}</td>
+						</tr>
+	
+					{% endif %}
+					{% endfor %}
+	
+				</table>
+			</div>
+			{% endfor %}
+	
+	
+	
+		</div>
+	</div>
+</body>
+
+</html>

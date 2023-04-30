@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- Font and CSS -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link
+		href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,900&display=swap"
+		rel="stylesheet">
+
+	<!-- <link href="{% static 'css/sort-list.css' %}" rel="stylesheet" type="text/css" /> -->
+	<link href="{% static 'css/styles.css' %}" rel="stylesheet" type="text/css" />
+
+
+	<!-- TailWind CSS  -->
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script src="{% static 'js/tailwindconfig.js' %}"></script>
+
+	<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+
+	<!-- Sort List  -->
+	<script src="{% static 'js/sort-list.js' %}"></script>
+</head>
+
+
+<body class="bg-white">
+
+	<!-- Nav  -->
+	<div class="flex fixed w-full justify-between bg-white items-center sm:py-2 px-4">
+		<!-- Logo  -->
+		<div>
+			<a href="/">
+				<img src="{% static 'images/O-shaped_logo.jpg' %}" class="h-16 sm:h-20 object-contain w-auto" />
+			</a>
+		</div>
+
+		<div class="flex items-center space-x-2.5 text-xs sm:text-sm w-11/12 md:w-1/2 text-white">
+			<!-- Linear Progress bar  -->
+			<div class="flex items-center space-x-2.5 w-full flex-row-reverse sm:flex-row">
+				<p class="text-black text-center">Progress ({{solved_scenarios}}/{{total_scenarios}})</p>
+				<div class="w-full bg-gray-300 rounded-full h-1.5 sm:h-3 w-full flex justify-left items-center">
+					<div class="bg-primary h-1.5 sm:h-3 rounded-full w-[calc({{solved_scenarios}}/{{total_scenarios}}*100%)]">
+					</div>
+				</div>
+			</div>
+
+			<!-- Submit, Help and Tutorial Buttons  -->
+			<div class="hidden sm:flex items-center space-x-2.5">
+				<button type="submit" value="submit" disabled
+					class="px-3 py-2 bg-primary disabled:opacity-70">Submit</button>
+				<button class="px-3 py-2 bg-primary">Help</button>
+				<button class="px-3 py-2 bg-primary">Tutorial</button>
+			</div>
+
+		</div>
+	</div>
+
+	<!-- Main  -->
+	<div class="pt-16 sm:pt-24">
+		<!-- Image Location  -->
+		<div
+			class="h-32 sm:h-[300px] pt-2 bg-gradient-to-r from-primary via-primary to-[#d87ed8] px-3 py-2 flex flex-col justify-center items-center">
+			<h3 class="text-xl text-center sm:text-3xl font-medium leading-8 text-white">Oshaped Psychometric Test 1
+			</h3>
+			<p class="sm:pt-2.5 max-w-2xl mx-auto sm:text-base text-gray-300">Question {{ solved_scenarios|add:1 }}
+			</p>
+		</div>
+
+		<div class="md:container md:mx-auto pt-2 sm:pt-10 pb-5">
+			<form method="post" onsubmit="saveAnswers()" class="overflow-hidden sm:rounded-lg">
+				{% csrf_token %}
+
+				<!-- Scenario  -->
+				<div class="px-4 pb-2 sm:px-6">
+					<p class="text-center text-sm sm:text-base text-gray-800 font-normal leading-6 sm:leading-7 ">{{scenarios.content}} </p>
+				</div>
+
+				<!-- Answers -->
+				<div class="px-4 sm:py-5 mb-3 sm:px-6">
+					<div class="pt-1 text-gray-900 sm:mt-0 max-w-3xl mx-auto">
+						<p class="text-gray-800 text-center pb-2 text-sm sm:text-base leading-6">
+							Please <span class="font-semibold">RANK</span> IN ORDER the options below, with the
+							<span class="font-semibold uppercase">topmost&uarr;</span> being what you are most
+							likely to do and the <span class="font-semibold uppercase">bottommost&darr;</span> being
+							what you are least likely to do:
+						</p>
+						<ul role="list" id="answerList" class="transition duration-500 transform">
+							{% with 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' as alphabets %}
+							{% for answer in answers %}
+
+							<li draggable="true" ondragend="dragEnd()" ondragover="dragOver(event)"
+								ondragstart="dragStart(event)" id="scenarioAnswer" value={{answer.id}}
+								class="flex items-center mt-3 border border-gray-400 max-w-3xl bg-white text-black text-[13px] sm:text-sm mx-auto cursor-move py-4 px-3.5 sm:px-5 rounded-md leading-5 sm:leading-6 ">
+								<p
+									class="mr-3 sm:mr-5 h-10 text-lg font-medium flex items-center justify-center w-10 text-center border border-gray-400 rounded-lg">
+									{{ alphabets|slice:forloop.counter|last }}
+								</p>
+								<div class="flex-1">
+									{{answer.content}}
+								</div>
+							</li>
+
+							{% endfor %}
+							{% endwith %}
+						</ul>
+					</div>
+				</div>
+
+				<input type="hidden" name="answerList_values">
+
+				<div class="pt-5 w-full flex justify-center sm:justify-end px-3">
+					<!-- <button
+						class=" border border-[gray] rounded py-2 w-32 text-sm text-[gray] font-medium hover:bg-[gray] hover:text-white">
+						Back
+					</button> -->
+					<button type="submit" value="submit"
+						class="flex justify-center space-x-1.5 items-center rounded py-2.5 w-32 text-sm font-medium bg-primary text-white transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110">
+
+						<p>Next</p>
+
+						<i class='fas fa-chevron-right'></i>
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+</body>
+
+</html>
