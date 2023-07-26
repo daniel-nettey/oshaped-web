@@ -19,7 +19,6 @@ Answer.objects.annotate(
 
 # Create your views here.
 
-
 def HomeView(request):
     user_found = True
     if request.method == "POST":
@@ -39,26 +38,21 @@ class UserDataGet(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-
 class TestDataGet(generics.ListCreateAPIView):
     queryset = Test.objects.all()
     serializer_class = TestSerializer
-
 
 class ScenarioDataGet(generics.ListCreateAPIView):
     queryset = Scenario.objects.all()
     serializer_class = ScenarioSerializer
 
-
 class AnswerDataGet(generics.ListCreateAPIView):
     queryset = Answer.objects.all()
     serializer_class = AnswerSerializer
 
-
 class AttributeDataGet(generics.ListCreateAPIView):
     queryset = Attribute.objects.all()
     serializer_class = AttributeSerializer
-
 
 class AnnouncementDataGet(generics.ListCreateAPIView):
     queryset = Announcement.objects.all()
@@ -85,15 +79,16 @@ def FeedbackView(request):
         'answer__scenario__scenario_attribute__attribute').values(
         name = F('answer__scenario__scenario_attribute__attribute__name')).annotate(
         total_score=Sum('score'), percentage = Sum('score') * 100/(Count('answer__scenario') * 5)).order_by(
-        'answer__scenario__scenario_attribute__attribute__id')
+        '-percentage', 'answer__scenario__scenario_attribute__attribute__id'
+        )
 
     # Get the Super Attribute Results
     superattribute_results = Response.objects.filter(user=userID, test=1).select_related(
         'answer__scenario__scenario_attribute__attribute__superAttribute').values(
         name = F('answer__scenario__scenario_attribute__attribute__superAttribute__name')).annotate(
-        total_score=Sum('score')).order_by('answer__scenario__scenario_attribute__attribute__superAttribute__id')
+        total_score=Sum('score')).order_by('-total_score','answer__scenario__scenario_attribute__attribute__superAttribute__id')
     
-    print(attribute_results)
+    print(superattribute_results)
 
 
     return render(request, "feedback.html", {
@@ -116,11 +111,6 @@ def UserView(request):
 
     
     responses = Response.objects.filter(user=userID, test=1)
-    
-    # a = Response.objects.select_related('answer','scenario').filter(user=userID, test = 1, scenario__in = temp_Scenarios)
-
-    # b = Answer.objects.select_related('response','scenario').filter(user=userID, test = 1, scenario__in = temp_Scenarios)
-
 
 
     return render(request, "report.html", {'scenarios': temp_Scenarios, 'responses':responses})
@@ -160,23 +150,10 @@ def LoginView(request):
 
 
 def TestScenarioAnswerView(request):
-    cacheEmail = cache.get('user_email')
-    print(cacheEmail)
+    try:
+        # Get the test details
+        total_scenarios,total_scenarios_count,user_response_count, userID, test = getTestDetails();
 
-    # Check user has loggedin 
-    if cacheEmail:
-        userID = User.objects.get(email = cacheEmail)
-        test = 1
-
-        # Get all the scenarios that belong to the test
-        total_scenarios = Scenario.objects.filter(
-            test_scenario__in=Test_Scenario.objects.filter(test=1))
-        total_scenarios_count = total_scenarios.count()
-
-        # Check response for the user's progress and return display
-        user_response_count = Response.objects.filter(
-            user=userID, test=test).count() // 4
-        
         # Check if user has not completed the test else direct to report
         if user_response_count < total_scenarios_count:
             # Return scenario and possible answers based on number of questions answered
@@ -192,7 +169,7 @@ def TestScenarioAnswerView(request):
     
                 try:
                     # Save responses of all options in database and continue test
-                    storeAnswers(user_answers, userID.id, test)
+                    storeAnswers(user_answers, userID.id, test, False)
                     return redirect('/test/')
 
                 except Exception:
@@ -200,43 +177,55 @@ def TestScenarioAnswerView(request):
             
             answer = shuffle_queryset(answer)
             
-            return render(request, "scenario.html", {"scenarios": scenario, "answers": answer, "total_scenarios": total_scenarios_count, 
-                                                 "solved_scenarios": user_response_count})
+            return render(request, "scenario.html", {"scenarios": scenario, "answers": answer, "solved_scenarios": user_response_count, "scenario_number": user_response_count + 1,
+                                                     "total_scenarios": total_scenarios_count, "scenarios_range": range(total_scenarios_count )})
     
         # User has completed the test, direct user to report page 
         else:
-            return redirect('/report/')
-    else:
+            return redirect('/feedback/')
+
+    except:
         return redirect('/')
         
 
 # DELETE SOON
-def ScenarioAnswerView(request, scenario_id):
-    scenario = Scenario.objects.get(id=scenario_id)
-    answer = Answer.objects.filter(scenario=scenario_id)
+def ScenarioAnswerView(request, scenario_number):
+    try:
+        # Get the test details
+        total_scenarios,total_scenarios_count,user_response_count, userID, test = getTestDetails();
+    
+        # Get specific scenario and the responses in the order they were chosen
+        scenario = total_scenarios[scenario_number - 1]
+        
+        responses = Response.objects.filter(user=userID, test=test, answer__scenario=scenario).select_related(
+            'answer').values('answer__id', 'answer__content', 'choice').annotate(id=F('answer__id')).annotate(
+            content=F('answer__content')).order_by('choice')
+        
+        
+        # Modify the response of user. 
+        if request.method == "POST":
+            print('### GET USER ANSWERS ###')
 
-    if request.method == "POST":
-        try:
+            # list of users values 
+            user_answers = eval(request.POST.get('answerList_values'))
+            print(user_answers, end='\n\n')
 
-            # Save responses of all options in database
-            print('HERE\n\n\n')
-            Response.objects.create(user=12, test=1, answer=48)
+            try:
+                # Save responses of all options in database and continue test
+                storeAnswers(user_answers, userID.id, test, True)
+                return redirect('/test/')
 
-            # return redirect('/scenario/' + str(scenario.id))
+            except Exception:
+                raise Exception
 
-            # scenario = Scenario.objects.all().exclude(id=scenario.id).order_by('id').first()
-            # answer = Answer.objects.filter(scenario=scenario.id)
-            # return redirect('/scenario/' + str(scenario.id))
+        return render(request, "scenario.html", {"scenarios": scenario, "answers": responses, "total_scenarios": total_scenarios_count, 
+                                                 "solved_scenarios": user_response_count, "scenario_number": scenario_number })
 
-        # scenario = scenario.get_next_by_created()
-        #     answer = Answer.objects.filter(scenario=scenario.id)
-        #     return render(request, 'scenario.html',  {"scenarios": scenario, "answers" : answer})
-        except Exception:
-            raise Exception
+    except:
+        return redirect('/as')
 
-    else:
-        return render(request, "scenario.html", {"scenarios": scenario, "answers": answer})
-
+    
+   
 
 def ScenarioAnswerTestView(request):
     scenario_all = Scenario.objects.all()
@@ -268,8 +257,34 @@ def ScenarioAnswerTestView(request):
 
 ########## HELPER FUNCTIONS ###########
 
+
+# Get test Details
+def getTestDetails():    
+    # cacheEmail = cache.get('user_email')
+    # print(cacheEmail)
+    # REmove 
+    cacheEmail = 'dnettey3@gmail.com'
+
+    # Check user has loggedin 
+    if cacheEmail:
+        userID = User.objects.get(email = cacheEmail)
+        test = 1
+
+        # Get all the scenarios that belong to the test
+        total_scenarios = Scenario.objects.filter(
+            test_scenario__in=Test_Scenario.objects.filter(test=1))
+        total_scenarios_count = total_scenarios.count()
+
+        # Check response for the user's progress and return display
+        user_response_count = Response.objects.filter(
+            user=userID, test=test).count() // 4
+        
+        return total_scenarios, total_scenarios_count, user_response_count, userID, test
+
+    return None
+
 # Helper Function to Save Answers in ScenarioView 
-def storeAnswers(user_answers, userID, testID):
+def storeAnswers(user_answers, userID, testID, updateRecord):
     tempRankVals = [rankValues[x][0] for x,val in enumerate(rankValues)]
 
     # Compute Correct Scores for choices
@@ -291,13 +306,23 @@ def storeAnswers(user_answers, userID, testID):
 
         print(tempUserChoice, '-',tempRanking, ':',tempScore)
 
-        Response.objects.update_or_create(
-            user_id= userID, 
-            answer_id=ans, 
-            test_id = testID, 
-            choice = tempUserChoice,
-            score = tempScore
-        )
+        # Whether created is being created or updated
+        if updateRecord:
+            ansRecord = Response.objects.get( user_id= userID, answer_id=ans, test_id = testID)
+            ansRecord.choice = tempUserChoice
+            ansRecord.score = tempScore
+            ansRecord.save()
+
+            print(ansRecord)
+
+        else:
+             Response.objects.update_or_create(
+                user_id= userID, 
+                answer_id=ans, 
+                test_id = testID, 
+                choice = tempUserChoice,
+                score = tempScore
+            )
 
 # Shuffle Query set 
 def shuffle_queryset(queryset):

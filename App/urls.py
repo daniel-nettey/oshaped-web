@@ -8,7 +8,7 @@ urlpatterns = [
     path('feedback/', FeedbackView, name="userTest"),
 
     path('test/', TestScenarioAnswerView, name="TestScenario"),
-    path('scenario/<int:scenario_id>/', ScenarioAnswerView, name="ScenarioAnswer"),
+    path('scenario/<int:scenario_number>/', ScenarioAnswerView, name="ScenarioAnswer"),
     path('scenario/', ScenarioAnswerTestView, name="ScenarioAnswer"),
 
     # Delete 

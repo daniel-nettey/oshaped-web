@@ -3,10 +3,10 @@
 <html>
 
 <head>
-	
+
 	<meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 	<!-- Font and CSS -->
 	<link href="{% static 'css/styles.css' %}" rel="stylesheet" type="text/css" />
 	<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,23 +16,14 @@
 		rel="stylesheet">
 
 	<!-- TailWind CSS  -->
-	<script src="https://cdn.tailwindcss.com"></script>
-	<script>
-		tailwind.config = {
-			theme: {
-				extend: {
-					colors: {
-						primary: '#993399',
-					}
-				}
-			}
-		}
-	</script>
+	<script src="{% static 'js/tailwind.min.js' %}"></script>
+	<script src="{% static 'js/tailwindconfig.js' %}"></script>
+
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-white">
 	<!-- NAV  -->
-	<div class="flex fixed w-full justify-between bg-white items-center py-2 px-4">
+	<div class="flex fixed w-full justify-between bg-white items-center py-2 px-4 shadow">
 		<!-- Logo  -->
 		<div>
 			<a href="/">
@@ -48,7 +39,45 @@
 	</div>
 
 	<!-- MAIN BODY  -->
-	<div class="pt-24">
+	<div class="pt-20">
+
+		<!-- Thank you Section  -->
+		<div class="bg-white ">
+			<div class="container mx-auto py-10">
+				<iframe class="aspect-video my-3 w-3/4 mx-auto rounded-xl" src="https://www.youtube.com/embed/WeOrymuK4sU"
+					title="YouTube video player" frameborder="0"
+					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+					allowfullscreen></iframe>
+			</div>
+		</div>
+		
+		<!-- Video Results Section  -->		
+		<div class="bg-[#26272a] text-white">
+			<div class="container mx-auto py-10">
+				<h1 class="text-xl sm:text-3xl font-bold italic">
+					WHAT DOES YOUR RESULT SAY ABOUT YOU
+				</h1>
+				<div class="sm:grid grid-cols-4 gap-x-3 gap-y-8 mx-auto py-5 ">
+					{% for attribute_result in attribute_results %}
+					<div class="cursor-pointer">
+
+						<iframe class="w-full h-auto sm:h-96 rounded-xl" src="https://www.youtube.com/embed/WeOrymuK4sU"
+							title="YouTube video player" frameborder="0"
+							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+							allowfullscreen></iframe>
+
+						<div class="flex justify-between items-center pt-0">
+							<p class="font-medium text-sm"> {{attribute_result.name}} </p>
+							<p class="font-semibold text-xl"> {{attribute_result.percentage}}% </p>
+						</div>
+
+					</div>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+
+
 
 		<!-- Total Score for SUPERATTRIBUTES  -->
 		<div class="max-w-5xl mx-auto py-10">
@@ -65,7 +94,8 @@
 				{% for superattribute_result in superattribute_results %}
 				<tr>
 					<td class="border border-slate-700 w-[85%] p-1">{{superattribute_result.name}}</td>
-					<td class="border border-slate-700 text-center text-xl font-semibold">{{superattribute_result.total_score}}</td>
+					<td class="border border-slate-700 text-center text-xl font-semibold">
+						{{superattribute_result.total_score}}</td>
 				</tr>
 				{% endfor %}
 
@@ -73,7 +103,7 @@
 		</div>
 
 		<!-- Total Score for Attributes  -->
-		<div class="max-w-5xl mx-auto py-10">
+		<!-- <div class="max-w-5xl mx-auto py-10">
 			<h1 class="text-center text-3xl font-semibold">
 				TOTAL SCORES FOR ATTRIBUTES
 			</h1>
@@ -88,13 +118,15 @@
 				{% for attribute_result in attribute_results %}
 				<tr>
 					<td class="border border-slate-700 w-[85%] p-1">{{attribute_result.name}}</td>
-					<td class="border border-slate-700 text-center text-xl font-semibold">{{attribute_result.total_score}}</td>
-					<td class="border border-slate-700 text-center text-xl font-semibold">{{attribute_result.percentage}} %</td>
+					<td class="border border-slate-700 text-center text-xl font-semibold">
+						{{attribute_result.total_score}}</td>
+					<td class="border border-slate-700 text-center text-xl font-semibold">
+						{{attribute_result.percentage}} %</td>
 				</tr>
 				{% endfor %}
 
 			</table>
-		</div>
+		</div> -->
 
 		<!-- Total Score for Scenario  -->
 		<div class="max-w-5xl mx-auto py-10">

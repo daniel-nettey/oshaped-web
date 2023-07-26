@@ -18,7 +18,7 @@
 
 
 	<!-- TailWind CSS  -->
-	<script src="https://cdn.tailwindcss.com"></script>
+	<script src="{% static 'js/tailwind.min.js' %}"></script>
 	<script src="{% static 'js/tailwindconfig.js' %}"></script>
 
 	<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
@@ -31,7 +31,7 @@
 <body class="bg-white">
 
 	<!-- Nav  -->
-	<div class="flex fixed w-full justify-between bg-white items-center sm:py-2 px-4">
+	<div class="flex fixed w-full justify-between bg-white items-center sm:py-2 px-4 z-50 shadow">
 		<!-- Logo  -->
 		<div>
 			<a href="/">
@@ -64,14 +64,42 @@
 	<div class="pt-16 sm:pt-24">
 		<!-- Image Location  -->
 		<div
-			class="h-32 sm:h-[300px] pt-2 bg-gradient-to-r from-primary via-primary to-[#d87ed8] px-3 py-2 flex flex-col justify-center items-center">
+			class="h-32 relative sm:h-[300px] pt-2 bg-gradient-to-r from-primary via-primary to-[#d87ed8] px-3 py-2 flex flex-col justify-center items-center">
 			<h3 class="text-xl text-center sm:text-3xl font-medium leading-8 text-white">Oshaped Psychometric Test 1
 			</h3>
-			<p class="sm:pt-2.5 max-w-2xl mx-auto sm:text-base text-gray-300">Question {{ solved_scenarios|add:1 }}
+			<p class="sm:pt-2.5 max-w-2xl mx-auto sm:text-base text-gray-300">Question {{ scenario_number}}
 			</p>
+
+			<div class="hidden sm:block sm:absolute -bottom-4 w-full">
+				<div class="flex justify-center items-end space-x-3.5 space-y-3 flex-wrap container mx-auto">
+					{% for number in scenarios_range %}
+					{% if forloop.counter < scenario_number %}
+					<a href="/scenario/{{forloop.counter}}" 
+					class="bg-white text-primary hover:bg-primary hover:text-white border border-primary h-9 w-9 font-medium flex items-center justify-center rounded-full text-xs cursor-pointer"> 
+						{{forloop.counter}} 
+					</a>
+					{% endif %}
+
+					{% if forloop.counter == scenario_number %}
+					<p class="bg-primary text-white border border-primary h-9 w-9 font-medium flex items-center justify-center rounded-full text-xs "> 
+						{{forloop.counter}} 
+					</p>
+					{% endif %}
+
+					{% if forloop.counter > scenario_number %}
+					<p class="bg-white text-gray-500 border border-gray-500 h-9 w-9  flex items-center justify-center rounded-full text-xs"> 
+						{{forloop.counter}} 
+					</p>
+					{% endif %}
+
+					
+					{% endfor %}
+				</div>
+				
+			</div>
 		</div>
 
-		<div class="md:container md:mx-auto pt-2 sm:pt-10 pb-5">
+		<div class="md:container md:mx-auto pt-2 sm:mt-3 sm:pt-10 pb-5">
 			<form method="post" onsubmit="saveAnswers()" class="overflow-hidden sm:rounded-lg">
 				{% csrf_token %}
 
@@ -100,9 +128,14 @@
 									class="mr-3 sm:mr-5 h-10 text-lg font-medium flex items-center justify-center w-10 text-center border border-gray-400 rounded-lg">
 									{{ alphabets|slice:forloop.counter|last }}
 								</p>
-								<div class="flex-1">
-									{{answer.content}}
-								</div>
+
+								{% if solved_scenarios|add:1  == scenario_number %}
+								<div class="flex-1"> {{answer.content}} </div>
+
+								{% else %}
+								<div class="flex-1"> {{answer.answer__content}} </div>
+
+								{% endif %}
 							</li>
 
 							{% endfor %}
@@ -113,15 +146,24 @@
 
 				<input type="hidden" name="answerList_values">
 
-				<div class="pt-5 w-full flex justify-center sm:justify-end px-3">
-					<!-- <button
-						class=" border border-[gray] rounded py-2 w-32 text-sm text-[gray] font-medium hover:bg-[gray] hover:text-white">
+				<div class="pt-5 w-full flex justify-center sm:justify-between px-3">
+					{% if solved_scenarios|add:1  == scenario_number %}
+					<a href="/scenario/{{scenario_number|add:-1}}" 
+						class=" border text-center border-[gray] rounded py-2 w-32 text-sm text-[gray] font-medium hover:bg-[gray] hover:text-white">
 						Back
-					</button> -->
-					<button type="submit" value="submit"
-						class="flex justify-center space-x-1.5 items-center rounded py-2.5 w-32 text-sm font-medium bg-primary text-white transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110">
+					</a>
+					{% endif %}
 
+					<button type="submit" value="submit"
+						class="flex justify-center sm:ml-auto space-x-1.5 items-center rounded py-2.5 w-32 text-sm font-medium bg-primary text-white transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110">
+						
+						{% if solved_scenarios|add:1  == scenario_number %}
 						<p>Next</p>
+
+						{% else %}
+						<p>Modify</p>
+
+						{% endif %}
 
 						<i class='fas fa-chevron-right'></i>
 					</button>

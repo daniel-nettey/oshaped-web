@@ -4,8 +4,8 @@
 
 <head>
 	<meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 	<!-- Font and CSS -->
 	<link href="{% static 'css/styles.css' %}" rel="stylesheet" type="text/css" />
 	<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,7 +16,7 @@
 
 	<!-- TailWind CSS  -->
 	<script src="https://cdn.tailwindcss.com"></script>
-	<script>
+	<script src="{% static 'js/tailwindconfig.js' %}">
 		tailwind.config = {
 			theme: {
 				extend: {
@@ -27,6 +27,10 @@
 			}
 		}
 	</script>
+
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
+
 </head>
 
 <body class="bg-gray-100">
@@ -46,14 +50,16 @@
 	</div>
 
 	<div class="pt-24">
-		
+		<button onclick="savePage()">
+			SAVE PAGE
+		</button>
 		<div class="container max-w-4xl mx-auto py-10 h-full ">
 			<div class="overflow-hidden bg-white shadow sm:rounded-lg">
 				<div class="px-4 py-5  sm:px-6">
 					<h3 class="text-lg font-medium leading-6 text-gray-900">Applicant Information</h3>
 					<p class="mt-1 max-w-2xl text-sm text-gray-500">Personal details and Result.</p>
 				</div>
-	
+
 				<div class="border-t border-gray-200">
 					<!-- User Information  -->
 					<div class="px-4 py-4 md:grid md:grid-cols-2 sm:gap-4 sm:px-6 ">
@@ -94,7 +100,7 @@
 							<p class="mt-1 text-sm text-gray-900 sm:mt-0">{{user.date_of_program}}</p>
 						</div>
 					</div>
-	
+
 					<!-- Attachments -->
 					<div class="px-4 py-5 sm:px-6">
 						<p class="text-sm font-medium text-gray-500">Attachments</p>
@@ -111,7 +117,8 @@
 										<span class="ml-2 w-0 flex-1 truncate">test1_result.pdf</span>
 									</div>
 									<div class="ml-4 flex-shrink-0">
-										<a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Download</a>
+										<a href="#"
+											class="font-medium text-indigo-600 hover:text-indigo-500">Download</a>
 									</div>
 								</li>
 								<li class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
@@ -126,10 +133,11 @@
 									</div>
 									<div class="ml-4 space-x-2 flex-shrink-0">
 										<a href="#" class="font-medium text-red-600 hover:text-red-500">View</a>
-										<a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Download</a>
+										<a href="#"
+											class="font-medium text-indigo-600 hover:text-indigo-500">Download</a>
 									</div>
 								</li>
-	
+
 							</ul>
 						</div>
 					</div>
@@ -144,35 +152,51 @@
 				<p class="text-center text-lg font-semibold pb-2">Scenario {{ forloop.counter }}</p>
 				<p class="text-sm text-center">{{ scenario.content }}</p>
 				<table class="text-sm border-collapse table-fixed border border-slate-500 mt-4">
-	
+
 					<tr>
 						<th class="border border-slate-700">Answer</th>
 						<th class="border border-slate-700">User's Choice</th>
 						<th class="border border-slate-700">Correct</th>
 						<th class="border border-slate-700">Score</th>
 					</tr>
-	
+
 					{% for response in responses %}
 					{% if response.answer.scenario == scenario %}
-	
-						<tr>
-							<td class="border border-slate-700 w-[60%] p-1">{{response.answer}}</td>
-							<td class="border border-slate-700 text-center">{{response.choice}}</td>
-							<td class="border border-slate-700 text-center">{{response.answer.ranking}}</td>
-							<td class="border border-slate-700 text-center">{{response.score}}</td>
-						</tr>
-	
+
+					<tr>
+						<td class="border border-slate-700 w-[60%] p-1">{{response.answer}}</td>
+						<td class="border border-slate-700 text-center">{{response.choice}}</td>
+						<td class="border border-slate-700 text-center">{{response.answer.ranking}}</td>
+						<td class="border border-slate-700 text-center">{{response.score}}</td>
+					</tr>
+
 					{% endif %}
 					{% endfor %}
-	
+
 				</table>
 			</div>
 			{% endfor %}
-	
-	
-	
+
+
+
 		</div>
 	</div>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+	<script>
+		// // Show the print dialog
+		// window.print();
+
+
+		// Save the page as a file
+		function savePage() {
+			var html = document.documentElement.outerHTML;
+			var blob = new Blob([html], { type: "application/pdf;charset=utf-8" });
+			saveAs(blob, "page.html");
+		}
+
+	</script>
 </body>
 
 </html>
