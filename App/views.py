@@ -260,10 +260,10 @@ def ScenarioAnswerTestView(request):
 
 # Get test Details
 def getTestDetails():    
-    # cacheEmail = cache.get('user_email')
-    # print(cacheEmail)
+    cacheEmail = cache.get('user_email')
+    print(cacheEmail)
     # REmove 
-    cacheEmail = 'dnettey3@gmail.com'
+    # cacheEmail = 'dnettey3@gmail.com'
 
     # Check user has loggedin 
     if cacheEmail:
